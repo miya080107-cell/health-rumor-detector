@@ -1,8 +1,7 @@
 # app.py
-from flask import send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 import os
 import json
-from flask import Flask, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime
@@ -12,13 +11,15 @@ import pandas as pd
 load_dotenv()
 
 # 从 .env 中读取密钥
-DEEPSEEK_API_KEY = "sk-38810f85edab4c98ac041614867c16b3"
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+if not DEEPSEEK_API_KEY:
+    raise RuntimeError("请在 .env 中配置 DEEPSEEK_API_KEY")
 
 # 初始化 DeepSeek 客户端
 client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 
 # --- 配置 ---
-MODEL_NAME = "deepseek-chat"   # 或 deepseek-chat
+MODEL_NAME = "deepseek-chat"   # 或 deepseek-reasoner
 LOGS_CSV = "logs.csv"
 
 app = Flask(__name__)
@@ -114,10 +115,10 @@ def append_log(entry: dict):
     header = not os.path.exists(LOGS_CSV)
     df_log.to_csv(LOGS_CSV, mode='a', index=False, header=header, encoding="utf-8-sig")
 
+# 支持前端 index.html
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
-
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
@@ -169,6 +170,3 @@ def analyze():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
-
-
-
