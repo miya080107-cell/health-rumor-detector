@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Health Rumor Checker</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background: #f9f9f9;
+    }
+    h2 {
+        color: #333;
+    }
+    textarea {
+        width: 100%;
+        height: 120px;
+        padding: 10px;
+        font-size: 16px;
+        resize: none;
+        margin-bottom: 10px;
+    }
+    button {
+        padding: 10px 20px;
+        background: #5a8dee;
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+    button:hover {
+        background: #466cbc;
+    }
+    #result {
+        margin-top: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 0 8px #ddd;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>PCOS Medical Rumor Detector</h2>
+
+<textarea id="userInput" placeholder="Please enter the information you wish to identify."></textarea>
+<br>
+<button onclick="analyzeRumor()">Analyze</button>
+
+<div id="result"></div>
+
+<script>
+async function analyzeRumor() {
+    const text = document.getElementById("userInput").value.trim();
+    if (!text) {
+        alert("内容不能为空！");
+        return;
+    }
+
+    const responseDiv = document.getElementById("result");
+    responseDiv.innerHTML = "正在分析中，请稍候... ⏳";
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/analyze", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({text})
+        });
+
+        const data = await response.json();
+
+        let html = `
+            <p><b>Conclusion:</b> ${data.conclusion}</p>
+            <p><b>Explanation:</b> ${data.explanation}</p>
+            <p><b>Sources:</b></p>
+            <ul>
+        `;
+
+        for (const src of data.sources || []) {
+            html += `<li><a href="${src.link}" target="_blank">${src.title}</a></li>`;
+        }
+
+        html += "</ul>";
+        responseDiv.innerHTML = html;
+
+    } catch (err) {
+        responseDiv.innerHTML = "❌ 请求失败，请检查 Flask 是否运行。";
+    }
+}
+</script>
+
+</body>
+</html>
+
