@@ -5,7 +5,6 @@ import json
 from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime
-import pandas as pd
 from flask_cors import CORS
 
 # --- 加载环境变量 ---
@@ -113,10 +112,15 @@ def call_model(prompt: str, retries=2):
         "sources": [{"title": "Example Scientific Source", "link": "https://www.ncbi.nlm.nih.gov/pmc/articles/"}]
     }, ensure_ascii=False), None
 
+import csv
+
 def append_log(entry: dict):
-    df_log = pd.DataFrame([entry])
-    header = not os.path.exists(LOGS_CSV)
-    df_log.to_csv(LOGS_CSV, mode='a', index=False, header=header, encoding="utf-8-sig")
+    file_exists = os.path.exists(LOGS_CSV)
+    with open(LOGS_CSV, mode='a', newline='', encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=["timestamp", "user_text", "result"])
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(entry)
 
 # 支持前端 index.html
 @app.route('/')
