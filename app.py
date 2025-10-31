@@ -31,35 +31,36 @@ def build_prompt(user_text: str) -> str:
     构造 prompt，要求模型严格返回 JSON，sources 必须为科研文章或权威机构。
     """
     prompt = f"""
-You are a careful medical-information assistant. A user will supply a short statement about PCOS (Polycystic Ovary Syndrome).
+You are a careful medical-information fact-checking assistant.
+
+A user will provide a short statement about a **disease, symptom, treatment, or health claim**.
 
 Your task:
-1) Judge whether the user's statement is medical misinformation ("rumor") or correct/partially correct.
-2) Provide a short, clear explanation (1-3 sentences).
-3) Provide authoritative reference links ONLY from scientific papers or recognized medical organizations (e.g., WHO, NIH, PubMed). Do NOT use social media, blogs, or non-official websites.
-4) Reply in STRICT JSON format with keys: conclusion, explanation, sources (list).
+1) Judge whether the user's statement is **accurate**, **partially correct**, or **medical misinformation (rumor)**.
+2) Provide a short, clear explanation (1–3 sentences) to clarify the truth.
+3) Provide **authoritative reference links ONLY** from scientific papers or recognized medical organizations (e.g., WHO, NIH, CDC, PubMed, Mayo Clinic). Do NOT include social media, news, or blogs.
+4) Reply in **STRICT JSON format** with keys: conclusion, explanation, sources (list).
 
 User statement:
 \"\"\"{user_text}\"\"\"
 
 Respond strictly in JSON like:
 {{
-  "conclusion": "rumor",
-  "explanation": "Short reason.",
+  "conclusion": "accurate",
+  "explanation": "Short reason with clarification.",
   "sources": [
-     {{"title": "WHO PCOS", "link": "https://www.who.int/news-room/fact-sheets/detail/pcos"}}
+     {{"title": "WHO Fact Sheet on Diabetes", "link": "https://www.who.int/news-room/fact-sheets/detail/diabetes"}}
   ]
 }}
 
 IMPORTANT:
-- Output must be legal JSON.
+- Output must be valid JSON only (no markdown or extra text).
 - Keys and values must use double quotes.
-- No comments allowed.
-- No trailing commas.
-- Do NOT wrap JSON in code block fences.
-- Do NOT output anything except JSON.
+- No comments or trailing commas.
+- Do NOT wrap the JSON in code blocks.
 """
     return prompt
+
 
 def call_model(prompt: str, retries=2):
     """

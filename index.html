@@ -44,7 +44,7 @@
 
 <body>
 
-<h2>PCOS Medical Rumor Detector</h2>
+<h2>Medical Misinformation Detector</h2>
 
 <textarea id="userInput" placeholder="Please enter the information you wish to identify."></textarea>
 <br>
@@ -56,7 +56,7 @@
 async function analyzeRumor() {
     const text = document.getElementById("userInput").value.trim();
     if (!text) {
-        alert("内容不能为空！");
+        alert("");
         return;
     }
 
