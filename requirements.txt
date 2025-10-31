@@ -1,4 +1,4 @@
-flask
-pandas
-openai
-python-dotenv
+flask==2.3.3
+pandas==2.0.3
+openai==1.0.0
+python-dotenv==1.0.0

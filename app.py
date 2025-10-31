@@ -6,6 +6,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime
 import pandas as pd
+from flask_cors import CORS
 
 # --- 加载环境变量 ---
 load_dotenv()
@@ -22,7 +23,9 @@ client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 MODEL_NAME = "deepseek-chat"   # 或 deepseek-reasoner
 LOGS_CSV = "logs.csv"
 
+
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "https://health-rumor-detector.onrender.com"}})
 
 def build_prompt(user_text: str) -> str:
     """

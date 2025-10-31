@@ -61,10 +61,10 @@ async function analyzeRumor() {
     }
 
     const responseDiv = document.getElementById("result");
-    responseDiv.innerHTML = "正在分析中，请稍候... ⏳";
+    responseDiv.innerHTML = "Analysis is in progress. Please wait a moment...⏳";
 
     try {
-        const response = await fetch("http://127.0.0.1:5000/analyze", {
+        const response = await fetch("https://health-rumor-detector.onrender.com/analyze", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({text})
